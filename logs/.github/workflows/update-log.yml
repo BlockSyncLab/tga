@@ -1,36 +1,26 @@
-name: Update Chat Log
+name: Update Log
 
 on:
-  workflow_dispatch:  # Esse evento permite que o workflow seja disparado manualmente
-  push:
-    branches:
-      - main  # Ou a branch principal onde você quer que as alterações ocorram
+  workflow_dispatch:
+    inputs:
+      question:
+        description: 'Pergunta'
+        required: true
+        default: 'Sem pergunta'
+      answer:
+        description: 'Resposta'
+        required: true
+        default: 'Sem resposta'
 
 jobs:
   update-log:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3  # Faz checkout do repositório
+        uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'  # A versão do Node.js que você usa
-
-      - name: Install dependencies
-        run: npm install  # Instala as dependências se necessário
-
-      - name: Update Chat Log
-        run: node ./scripts/update-log.js  # Script que irá atualizar o chat-log.json
-
-      - name: Commit and push changes
+      - name: Exibir pergunta e resposta
         run: |
-          git config --local user.name "GitHub Actions"
-          git config --local user.email "actions@github.com"
-          git add chat-log.json  # Adiciona o arquivo modificado
-          git commit -m "Atualizar chat log"
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GITHUB_TOKEN é uma variável de ambiente que o GitHub fornece automaticamente
+          echo "Pergunta: ${{ github.event.inputs.question }}"
+          echo "Resposta: ${{ github.event.inputs.answer }}"
