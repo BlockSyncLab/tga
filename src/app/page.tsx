@@ -114,6 +114,10 @@ export default function ChatPage() {
           className="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 h-24 resize-y"
         />
 
+        <div className="text-xs text-red-500 mb-2 text-center">
+          Todas as perguntas e respostas são registradas no servidor para curadoria e futuro treinamento da inteligência artificial.
+        </div>
+
         <button 
           onClick={handleSendMessage}
           className="w-full p-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700"
