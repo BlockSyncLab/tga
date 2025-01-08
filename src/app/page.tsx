@@ -44,7 +44,9 @@ export default function ChatPage() {
       });
 
       if (!res.ok) {
-        console.error('Erro na resposta da API /api/ask');
+        console.error('Erro na resposta da API /api/ask, Status:', res.status);
+        const errorDetails = await res.text(); // Captura a resposta de erro do servidor
+        console.error('Detalhes do erro:', errorDetails);
         throw new Error('Erro ao buscar resposta do servidor');
       }
 
