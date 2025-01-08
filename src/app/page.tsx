@@ -15,14 +15,11 @@ export default function ChatPage() {
 
   // Atualiza a mensagem digitada
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    console.log('Atualizando entrada do usuário', e.target.value);
     setInput(e.target.value);
   };
 
   // Função para enviar a mensagem e processar a resposta
   const handleSendMessage = async () => {
-    console.log('Enviando mensagem...', input);
-
     if (!input.trim()) return; // Ignora mensagens vazias
 
     const newMessage: Message = { text: input, sender: 'user' };
@@ -31,7 +28,6 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
-      console.log('Fazendo requisição para /api/ask');
       const res = await fetch('/api/ask', {
         method: 'POST',
         headers: {
@@ -45,42 +41,20 @@ export default function ChatPage() {
 
       if (!res.ok) {
         console.error('Erro na resposta da API /api/ask, Status:', res.status);
-        const errorDetails = await res.text(); // Captura a resposta de erro do servidor
+        const errorDetails = await res.text();
         console.error('Detalhes do erro:', errorDetails);
         throw new Error('Erro ao buscar resposta do servidor');
       }
 
       const data = await res.json();
-      console.log('Resposta recebida do servidor', data);
-
       const botMessage: Message = { text: data.response || 'Resposta não disponível', sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]); // Adiciona a resposta ao histórico
 
-      console.log('Enviando log para /api/trigger-log-update');
-      // Enviar a pergunta e a resposta para o servidor para salvar no log no GitHub
-      const logResponse = await fetch('/api/trigger-log-update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          question: input,
-          answer: data.response || 'Resposta não disponível',
-        }),
-      });
-
-      if (!logResponse.ok) {
-        console.error('Erro ao enviar log para o GitHub', logResponse.status);
-        throw new Error('Erro ao enviar log para o GitHub');
-      }
-
-      console.log('Log enviado com sucesso para o GitHub');
     } catch (error) {
       console.error('Erro ao enviar a mensagem:', error);
       const errorMessage: Message = { text: 'Erro ao buscar resposta. Tente novamente.', sender: 'bot' };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
-      console.log('Finalizando envio de mensagem');
       setIsLoading(false);
     }
   };
@@ -131,10 +105,6 @@ export default function ChatPage() {
           onChange={handleInputChange}
           className="w-full p-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4 h-24 resize-y"
         />
-
-        <div className="text-xs text-red-500 mb-2 text-center">
-          Todas as perguntas e respostas são registradas no servidor para curadoria e futuro treinamento da inteligência artificial.
-        </div>
 
         <button 
           onClick={handleSendMessage}
