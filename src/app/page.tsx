@@ -15,11 +15,14 @@ export default function ChatPage() {
 
   // Atualiza a mensagem digitada
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    console.log('Atualizando entrada do usuário', e.target.value);
     setInput(e.target.value);
   };
 
   // Função para enviar a mensagem e processar a resposta
   const handleSendMessage = async () => {
+    console.log('Enviando mensagem...', input);
+
     if (!input.trim()) return; // Ignora mensagens vazias
 
     const newMessage: Message = { text: input, sender: 'user' };
@@ -28,6 +31,7 @@ export default function ChatPage() {
     setIsLoading(true);
 
     try {
+      console.log('Fazendo requisição para /api/ask');
       const res = await fetch('/api/ask', {
         method: 'POST',
         headers: {
@@ -40,13 +44,17 @@ export default function ChatPage() {
       });
 
       if (!res.ok) {
+        console.error('Erro na resposta da API /api/ask');
         throw new Error('Erro ao buscar resposta do servidor');
       }
 
       const data = await res.json();
+      console.log('Resposta recebida do servidor', data);
+
       const botMessage: Message = { text: data.response || 'Resposta não disponível', sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]); // Adiciona a resposta ao histórico
 
+      console.log('Enviando log para /api/trigger-log-update');
       // Enviar a pergunta e a resposta para o servidor para salvar no log no GitHub
       await fetch('/api/trigger-log-update', {
         method: 'POST',
@@ -59,10 +67,11 @@ export default function ChatPage() {
         }),
       });
     } catch (error) {
-      console.error('Erro:', error);
+      console.error('Erro ao enviar a mensagem:', error);
       const errorMessage: Message = { text: 'Erro ao buscar resposta. Tente novamente.', sender: 'bot' };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
+      console.log('Finalizando envio de mensagem');
       setIsLoading(false);
     }
   };
