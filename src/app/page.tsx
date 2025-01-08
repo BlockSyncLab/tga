@@ -47,8 +47,8 @@ export default function ChatPage() {
       const botMessage: Message = { text: data.response || 'Resposta não disponível', sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]); // Adiciona a resposta ao histórico
 
-      // Enviar a pergunta e a resposta para o servidor para salvar no log
-      await fetch('/api/save-log', {
+      // Enviar a pergunta e a resposta para o servidor para salvar no log no GitHub
+      await fetch('/api/trigger-log-update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
