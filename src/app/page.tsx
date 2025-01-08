@@ -46,6 +46,18 @@ export default function ChatPage() {
       const data = await res.json();
       const botMessage: Message = { text: data.response || 'Resposta não disponível', sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]); // Adiciona a resposta ao histórico
+
+      // Enviar a pergunta e a resposta para o servidor para salvar no log
+      await fetch('/api/save-log', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          question: input,
+          answer: data.response || 'Resposta não disponível',
+        }),
+      });
     } catch (error) {
       console.error('Erro:', error);
       const errorMessage: Message = { text: 'Erro ao buscar resposta. Tente novamente.', sender: 'bot' };
