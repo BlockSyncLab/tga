@@ -58,7 +58,7 @@ export default function ChatPage() {
 
       console.log('Enviando log para /api/trigger-log-update');
       // Enviar a pergunta e a resposta para o servidor para salvar no log no GitHub
-      await fetch('/api/trigger-log-update', {
+      const logResponse = await fetch('/api/trigger-log-update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,6 +68,13 @@ export default function ChatPage() {
           answer: data.response || 'Resposta não disponível',
         }),
       });
+
+      if (!logResponse.ok) {
+        console.error('Erro ao enviar log para o GitHub', logResponse.status);
+        throw new Error('Erro ao enviar log para o GitHub');
+      }
+
+      console.log('Log enviado com sucesso para o GitHub');
     } catch (error) {
       console.error('Erro ao enviar a mensagem:', error);
       const errorMessage: Message = { text: 'Erro ao buscar resposta. Tente novamente.', sender: 'bot' };
