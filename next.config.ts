@@ -6,13 +6,12 @@ const nextConfig = {
     return [
       {
         source: '/api/ask',
-        destination: 'https://orca-app-qinul.ondigitalocean.app/ask',
+        destination: process.env.API_DESTINATION || 'https://default-url.com/ask',
       },
     ];
   },
 };
 
 module.exports = nextConfig;
-
 
 export default nextConfig;
